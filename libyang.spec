@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 0.16.105
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/debian/libyang-%{version}-1.tar.gz
@@ -134,6 +134,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Thu Oct 03 2019 Miro Hrončok <mhroncok@redhat.com> - 0.16.105-4
+- Rebuilt for Python 3.8.0rc1 (#1748018)
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 0.16.105-3
 - Rebuilt for Python 3.8
 
