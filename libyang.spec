@@ -6,12 +6,14 @@
 %global run_valgrind_tests ON
 %endif
 
+%global rsuffixver 1.0-r4
+
 Name: libyang
-Version: 0.16.105
-Release: 4%{?dist}
+Version: 1.0.73
+Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
-Source: %{url}/archive/debian/libyang-%{version}-1.tar.gz
+Source: %{url}/archive/v%{rsuffixver}.tar.gz
 License: BSD
 
 Requires:  pcre
@@ -72,7 +74,7 @@ Libyang is YANG data modeling language parser and toolkit
 written (and providing API) in C.
 
 %prep
-%setup -q -n libyang-debian-libyang-%{version}-1
+%setup -q -n libyang-%{rsuffixver}
 mkdir build
 
 %build
@@ -106,8 +108,10 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_bindir}/yangre
 %{_datadir}/man/man1/yanglint.1.gz
 %{_datadir}/man/man1/yangre.1.gz
-%{_libdir}/libyang.so.*
-%{_libdir}/libyang/*
+%{_libdir}/libyang
+%{_libdir}/libyang.so.1*
+%{_libdir}/libyang/extensions
+%{_libdir}/libyang/user_types/*
 %dir %{_libdir}/libyang/
 
 %files devel
@@ -134,6 +138,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Fri Oct 25 2019 Tomas Korbar <tkorbar@redhat.com> - 1.0.73-1
+- Rebase to version 1.0.73 (#1758512)
+
 * Thu Oct 03 2019 Miro Hrončok <mhroncok@redhat.com> - 0.16.105-4
 - Rebuilt for Python 3.8.0rc1 (#1748018)
 
