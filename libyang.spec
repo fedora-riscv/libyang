@@ -6,10 +6,10 @@
 %global run_valgrind_tests ON
 %endif
 
-%global rsuffixver 1.0-r4
+%global rsuffixver 1.0-r5
 
 Name: libyang
-Version: 1.0.73
+Version: 1.0.101
 Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
@@ -138,6 +138,11 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Mon Dec 09 2019 Tomas Korbar <tkorbar@redhat.com> - 1.0.101-1
+- Rebase to version 1.0.101
+- Fix CVE-2019-19333 (#1780495)
+- Fix CVE-2019-19334 (#1780494)
+
 * Fri Oct 25 2019 Tomas Korbar <tkorbar@redhat.com> - 1.0.73-1
 - Rebase to version 1.0.73 (#1758512)
 
