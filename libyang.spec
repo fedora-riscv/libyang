@@ -6,14 +6,12 @@
 %global run_valgrind_tests ON
 %endif
 
-%global rsuffixver 1.0-r5
-
 Name: libyang
-Version: 1.0.101
-Release: 2%{?dist}
+Version: 1.0.130
+Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
-Source: %{url}/archive/v%{rsuffixver}.tar.gz
+Source: %{url}/archive/v%{version}.tar.gz
 License: BSD
 
 Requires:  pcre
@@ -74,7 +72,7 @@ Libyang is YANG data modeling language parser and toolkit
 written (and providing API) in C.
 
 %prep
-%setup -q -n libyang-%{rsuffixver}
+%setup -q
 mkdir build
 
 %build
@@ -138,6 +136,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Fri Feb 07 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.130-1
+- Rebase to version 1.0.130 (#1797495)
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.101-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
