@@ -7,8 +7,8 @@
 %endif
 
 Name: libyang
-Version: 1.0.167
-Release: 2%{?dist}
+Version: 1.0.176
+Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -106,9 +106,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_bindir}/yangre
 %{_datadir}/man/man1/yanglint.1.gz
 %{_datadir}/man/man1/yangre.1.gz
-%{_libdir}/libyang
 %{_libdir}/libyang.so.1
-%{_libdir}/libyang.so.1.7.11
+%{_libdir}/libyang.so.1.*
+%{_libdir}/libyang1
 
 %files devel
 %{_libdir}/libyang.so
@@ -121,7 +121,7 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 
 %files -n libyang-cpp
 %{_libdir}/libyang-cpp.so.1
-%{_libdir}/libyang-cpp.so.1.7.11
+%{_libdir}/libyang-cpp.so.1.*
 
 %files -n libyang-cpp-devel
 %{_libdir}/libyang-cpp.so
@@ -135,6 +135,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Fri Jun 19 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.176-1
+- Update to 1.0.176
+
 * Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 1.0.167-2
 - Rebuilt for Python 3.9
 
