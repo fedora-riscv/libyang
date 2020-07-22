@@ -7,7 +7,7 @@
 %endif
 
 Name: libyang
-Version: 1.0.176
+Version: 1.0.184
 Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
@@ -73,12 +73,9 @@ written (and providing API) in C.
 
 %prep
 %setup -q
-mkdir build
 
 %build
-cd build
 %cmake \
-   %{?_smp_mflags} \
    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
    -DCMAKE_BUILD_TYPE:String="Package" \
    -DENABLE_LYD_PRIV=ON \
@@ -86,17 +83,18 @@ cd build
    -DGEN_JAVASCRIPT_BINDINGS=OFF \
    -DGEN_LANGUAGE_BINDINGS=ON \
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests} ..
-%make_build
+%cmake_build
+pushd x86_64-redhat-linux-gnu
 make doc
+popd
 
 %check
-cd build
+pushd x86_64-redhat-linux-gnu
 ctest --output-on-failure -V %{?_smp_mflags}
+popd
 
 %install
-pushd build
-%make_install DESTDIR=%{buildroot}
-popd
+%cmake_install
 mkdir -m0755 -p %{buildroot}/%{_docdir}/libyang
 cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 
@@ -135,6 +133,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Wed Jul 22 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.184-1
+- Update to 1.0.184
+
 * Fri Jun 19 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.176-1
 - Update to 1.0.176
 
