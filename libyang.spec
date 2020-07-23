@@ -14,6 +14,8 @@ Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
 License: BSD
 
+Patch0:	libyang-1.0.184-doc.patch
+
 Requires:  pcre
 BuildRequires:  cmake
 BuildRequires:  doxygen
@@ -72,7 +74,7 @@ Libyang is YANG data modeling language parser and toolkit
 written (and providing API) in C.
 
 %prep
-%setup -q
+%autosetup
 
 %build
 %cmake \
@@ -84,12 +86,14 @@ written (and providing API) in C.
    -DGEN_LANGUAGE_BINDINGS=ON \
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests} ..
 %cmake_build
-pushd x86_64-redhat-linux-gnu
+mkdir build
+cp ./%_target_platform/src/libyang.h ./build/libyang.h
+pushd %_target_platform
 make doc
 popd
 
 %check
-pushd x86_64-redhat-linux-gnu
+pushd %_target_platform
 ctest --output-on-failure -V %{?_smp_mflags}
 popd
 
@@ -135,6 +139,7 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %changelog
 * Wed Jul 22 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.184-1
 - Update to 1.0.184
+- Fix build
 
 * Fri Jun 19 2020 Tomas Korbar <tkorbar@redhat.com> - 1.0.176-1
 - Update to 1.0.176
