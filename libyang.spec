@@ -1,6 +1,6 @@
-# valgrind finds invalid writes in libcmocka on arm
+# valgrind finds invalid writes in libcmocka on arm and power
 # see bug #1699304 for more information
-%ifarch %arm
+%ifarch %arm ppc64le
 %global run_valgrind_tests OFF
 %else
 %global run_valgrind_tests ON
@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 1.0.184
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -137,6 +137,10 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Wed Sep 02 2020 Merlin Mathesius <mmathesi@redhat.com> - 1.0.184-3
+- Fix FTBFS by disabling valgrind on power since it finds bogus invalid
+  writes in libcmocka
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.184-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
