@@ -29,6 +29,7 @@ BuildRequires:  python3-devel
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  graphviz
+BuildRequires: make
 
 %package devel
 Summary:    Development files for libyang
