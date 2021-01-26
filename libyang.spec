@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 1.0.184
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -138,6 +138,9 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.184-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Wed Sep 02 2020 Merlin Mathesius <mmathesi@redhat.com> - 1.0.184-3
 - Fix FTBFS by disabling valgrind on power since it finds bogus invalid
   writes in libcmocka
