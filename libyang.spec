@@ -7,7 +7,7 @@
 %endif
 
 Name: libyang
-Version: 1.0.215
+Version: 1.0.225
 Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
@@ -138,6 +138,10 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Tue Mar 09 2021 Tomas Korbar <tkorbar@redhat.com> - 1.0.225-1
+- Rebase to version 1.0.225
+- Resolves: rhbz#1936718
+
 * Wed Feb 03 2021 Tomas Korbar <tkorbar@redhat.com> - 1.0.215-1
 - Rebase to version 1.0.215
 - Resolves: rhbz#1921779
