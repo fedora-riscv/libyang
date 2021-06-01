@@ -7,19 +7,16 @@
 %endif
 
 Name: libyang
-Version: 1.0.225
+Version: 2.0.7
 Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
 License: BSD
 
-Patch0:	libyang-1.0.184-doc.patch
-
-Requires:  pcre
 BuildRequires:  cmake
 BuildRequires:  doxygen
-BuildRequires:  pcre-devel
+BuildRequires:  pcre2-devel
 BuildRequires:  gcc
 BuildRequires:  valgrind
 BuildRequires:  gcc-c++
@@ -29,40 +26,16 @@ BuildRequires:  python3-devel
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  graphviz
-BuildRequires: make
+BuildRequires:  make
 
 %package devel
 Summary:    Development files for libyang
 Requires:   %{name}%{?_isa} = %{version}-%{release}
-Requires:   pcre-devel
+Requires:   pcre2-devel
 
 %package devel-doc
 Summary:    Documentation of libyang API
-Requires:   %{name} = %{version}-%{release}
-BuildArch:  noarch
-
-%package -n libyang-cpp
-Summary:    C++ bindings for libyang
 Requires:   %{name}%{?_isa} = %{version}-%{release}
-
-%package -n libyang-cpp-devel
-Summary:    Development files for libyang-cpp
-Requires:   libyang-cpp%{?_isa} = %{version}-%{release}
-Requires:   pcre-devel
-
-%package -n python3-libyang
-Summary:    Python3 bindings for libyang
-Requires:   libyang-cpp%{?_isa} = %{version}-%{release}
-%{?python_provide:%python_provide python3-libyang}
-
-%description -n libyang-cpp
-Bindings of libyang library to C++ language.
-
-%description -n libyang-cpp-devel
-Headers of bindings to c++ language.
-
-%description -n python3-libyang
-Bindings of libyang library to python language.
 
 %description devel
 Headers of libyang library.
@@ -82,13 +55,8 @@ written (and providing API) in C.
    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
    -DCMAKE_BUILD_TYPE:String="Package" \
    -DENABLE_LYD_PRIV=ON \
-   -DGEN_JAVA_BINDINGS=OFF \
-   -DGEN_JAVASCRIPT_BINDINGS=OFF \
-   -DGEN_LANGUAGE_BINDINGS=ON \
-   -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests} ..
+   -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
 %cmake_build
-mkdir build
-cp ./%_target_platform/src/libyang.h ./build/libyang.h
 pushd %_target_platform
 make doc
 popd
@@ -108,10 +76,8 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_bindir}/yanglint
 %{_bindir}/yangre
 %{_datadir}/man/man1/yanglint.1.gz
-%{_datadir}/man/man1/yangre.1.gz
-%{_libdir}/libyang.so.1
-%{_libdir}/libyang.so.1.*
-%{_libdir}/libyang1
+%{_libdir}/libyang.so.2
+%{_libdir}/libyang.so.2.*
 
 %files devel
 %{_libdir}/libyang.so
@@ -122,22 +88,11 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %files devel-doc
 %{_docdir}/libyang
 
-%files -n libyang-cpp
-%{_libdir}/libyang-cpp.so.1
-%{_libdir}/libyang-cpp.so.1.*
-
-%files -n libyang-cpp-devel
-%{_libdir}/libyang-cpp.so
-%{_includedir}/libyang/*.hpp
-%{_libdir}/pkgconfig/libyang-cpp.pc
-%dir %{_includedir}/libyang/
-
-%files -n python3-libyang
-%{python3_sitearch}/yang.py
-%{python3_sitearch}/_yang.so
-%{python3_sitearch}/__pycache__/yang*
-
 %changelog
+* Mon May 31 2021 Tomas Korbar <tkorbar@redhat.com> - 2.0.7-1
+- Rebase to version 2.0.7
+- Resolves: rhbz#1959645
+
 * Tue Mar 09 2021 Tomas Korbar <tkorbar@redhat.com> - 1.0.225-1
 - Rebase to version 1.0.225
 - Resolves: rhbz#1936718
