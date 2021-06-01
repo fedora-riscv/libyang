@@ -6,24 +6,17 @@
 %global run_valgrind_tests ON
 %endif
 
-# Use arch-independent builddir
-%global _vpath_builddir %{_vendor}-%{_target_os}-build
+Name: libyang
+Version: 2.0.7
+Release: 1%{?dist}
+Summary: YANG data modeling language library
+Url: https://github.com/CESNET/libyang
+Source: %{url}/archive/v%{version}.tar.gz
+License: BSD
 
-# library soname major version
-%global somajor 1
-
-Name:           libyang
-Version:        1.0.225
-Release:        4%{?dist}
-Summary:        YANG data modeling language library
-License:        BSD
-URL:            https://github.com/CESNET/libyang
-Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-
-BuildRequires:  bison
 BuildRequires:  cmake
 BuildRequires:  doxygen
-BuildRequires:  flex
+BuildRequires:  pcre2-devel
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  graphviz
@@ -31,48 +24,19 @@ BuildRequires:  libcmocka-devel
 BuildRequires:  make
 BuildRequires:  pcre-devel
 BuildRequires:  python3-devel
-BuildRequires:  swig >= 3.0.12
-BuildRequires:  valgrind
-
-# This was not properly split out before
-Conflicts:      %{name} < 1.0.225-3
-
-%package tools
-Summary:        YANG validator tools
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-# This was not properly split out before
-Conflicts:      %{name} < 1.0.225-3
+BuildRequires:  flex
+BuildRequires:  bison
+BuildRequires:  graphviz
+BuildRequires:  make
 
 %package devel
-Summary:        Development files for libyang
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       pcre-devel
+Summary:    Development files for libyang
+Requires:   %{name}%{?_isa} = %{version}-%{release}
+Requires:   pcre2-devel
 
 %package devel-doc
-Summary:        Documentation of libyang API
-Requires:       %{name}-devel = %{version}-%{release}
-BuildArch:      noarch
-
-%package cpp
-Summary:        C++ bindings for libyang
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-
-%package cpp-devel
-Summary:        Development files for libyang-cpp
-Requires:       %{name}-cpp%{?_isa} = %{version}-%{release}
-Requires:       pcre-devel
-
-%package -n python3-libyang
-Summary:        Python3 bindings for libyang
-Requires:       %{name}-cpp%{?_isa} = %{version}-%{release}
-%{?python_provide:%python_provide python3-libyang}
-
-%description
-Libyang is YANG data modeling language parser and toolkit
-written (and providing API) in C.
-
-%description tools
-YANG validator tools.
+Summary:    Documentation of libyang API
+Requires:   %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 Headers of libyang library.
@@ -97,18 +61,16 @@ Bindings of libyang library to python language.
    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
    -DCMAKE_BUILD_TYPE:String="Package" \
    -DENABLE_LYD_PRIV=ON \
-   -DGEN_JAVA_BINDINGS=OFF \
-   -DGEN_JAVASCRIPT_BINDINGS=OFF \
-   -DGEN_LANGUAGE_BINDINGS=ON \
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
-
 %cmake_build
-
-# Build documentation
-%cmake_build --target doc
+pushd redhat-linux-build
+make doc
+popd
 
 %check
-%ctest
+pushd redhat-linux-build
+ctest --output-on-failure -V %{?_smp_mflags}
+popd
 
 %install
 %cmake_install
@@ -124,8 +86,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %files tools
 %{_bindir}/yanglint
 %{_bindir}/yangre
-%{_mandir}/man1/yanglint.1*
-%{_mandir}/man1/yangre.1*
+%{_datadir}/man/man1/yanglint.1.gz
+%{_libdir}/libyang.so.2
+%{_libdir}/libyang.so.2.*
 
 %files devel
 %dir %{_includedir}/libyang/
@@ -136,6 +99,7 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %files devel-doc
 %{_docdir}/libyang/
 
+<<<<<<< HEAD
 %files cpp
 %{_libdir}/libyang-cpp.so.%{somajor}{,.*}
 
@@ -151,6 +115,10 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Fri Aug 06 2021 Tomas Korbar <tkorbar@redhat.com> - 2.0.7-1
+- Rebase to version 2.0.7
+- Resolves: rhbz#1959645
+
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.225-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
