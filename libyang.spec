@@ -1,68 +1,78 @@
 # valgrind finds invalid writes in libcmocka on arm and power
 # see bug #1699304 for more information
-%ifarch %arm ppc64le
+%ifarch %{arm} ppc64le
 %global run_valgrind_tests OFF
 %else
 %global run_valgrind_tests ON
 %endif
 
-Name: libyang
-Version: 1.0.225
-Release: 2%{?dist}
-Summary: YANG data modeling language library
-Url: https://github.com/CESNET/libyang
-Source: %{url}/archive/v%{version}.tar.gz
-License: BSD
+# Use arch-independent builddir
+%global _vpath_builddir %{_vendor}-%{_target_os}-build
 
-Patch0:	libyang-1.0.184-doc.patch
+# library soname major version
+%global somajor 1
 
-Requires:  pcre
+Name:           libyang
+Version:        1.0.225
+Release:        3%{?dist}
+Summary:        YANG data modeling language library
+License:        BSD
+URL:            https://github.com/CESNET/libyang
+Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+
+BuildRequires:  bison
 BuildRequires:  cmake
 BuildRequires:  doxygen
-BuildRequires:  pcre-devel
-BuildRequires:  gcc
-BuildRequires:  valgrind
-BuildRequires:  gcc-c++
-BuildRequires:  swig >= 3.0.12
-BuildRequires:  libcmocka-devel
-BuildRequires:  python3-devel
 BuildRequires:  flex
-BuildRequires:  bison
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  graphviz
-BuildRequires: make
+BuildRequires:  libcmocka-devel
+BuildRequires:  make
+BuildRequires:  pcre-devel
+BuildRequires:  python3-devel
+BuildRequires:  swig >= 3.0.12
+BuildRequires:  valgrind
+
+# This was not properly split out before
+Conflicts:      %{name} < 1.0.225-3
+
+%package tools
+Summary:        YANG validator tools
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+# This was not properly split out before
+Conflicts:      %{name} < 1.0.225-3
 
 %package devel
-Summary:    Development files for libyang
-Requires:   %{name}%{?_isa} = %{version}-%{release}
-Requires:   pcre-devel
+Summary:        Development files for libyang
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pcre-devel
 
 %package devel-doc
-Summary:    Documentation of libyang API
-Requires:   %{name} = %{version}-%{release}
-BuildArch:  noarch
+Summary:        Documentation of libyang API
+Requires:       %{name}-devel = %{version}-%{release}
+BuildArch:      noarch
 
-%package -n libyang-cpp
-Summary:    C++ bindings for libyang
-Requires:   %{name}%{?_isa} = %{version}-%{release}
+%package cpp
+Summary:        C++ bindings for libyang
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%package -n libyang-cpp-devel
-Summary:    Development files for libyang-cpp
-Requires:   libyang-cpp%{?_isa} = %{version}-%{release}
-Requires:   pcre-devel
+%package cpp-devel
+Summary:        Development files for libyang-cpp
+Requires:       %{name}-cpp%{?_isa} = %{version}-%{release}
+Requires:       pcre-devel
 
 %package -n python3-libyang
-Summary:    Python3 bindings for libyang
-Requires:   libyang-cpp%{?_isa} = %{version}-%{release}
+Summary:        Python3 bindings for libyang
+Requires:       %{name}-cpp%{?_isa} = %{version}-%{release}
 %{?python_provide:%python_provide python3-libyang}
 
-%description -n libyang-cpp
-Bindings of libyang library to C++ language.
+%description
+Libyang is YANG data modeling language parser and toolkit
+written (and providing API) in C.
 
-%description -n libyang-cpp-devel
-Headers of bindings to c++ language.
-
-%description -n python3-libyang
-Bindings of libyang library to python language.
+%description tools
+YANG validator tools.
 
 %description devel
 Headers of libyang library.
@@ -70,67 +80,70 @@ Headers of libyang library.
 %description devel-doc
 Documentation of libyang API.
 
-%description
-Libyang is YANG data modeling language parser and toolkit
-written (and providing API) in C.
+%description cpp
+Bindings of libyang library to C++ language.
+
+%description cpp-devel
+Headers of bindings to c++ language.
+
+%description -n python3-libyang
+Bindings of libyang library to python language.
 
 %prep
-%autosetup
+%autosetup -p1
 
 %build
 %cmake \
-   -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+   -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
    -DCMAKE_BUILD_TYPE:String="Package" \
    -DENABLE_LYD_PRIV=ON \
    -DGEN_JAVA_BINDINGS=OFF \
    -DGEN_JAVASCRIPT_BINDINGS=OFF \
    -DGEN_LANGUAGE_BINDINGS=ON \
-   -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests} ..
+   -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
+
 %cmake_build
-mkdir build
-cp ./%_target_platform/src/libyang.h ./build/libyang.h
-pushd %_target_platform
-make doc
-popd
+
+# Build documentation
+%cmake_build --target doc
 
 %check
-pushd %_target_platform
-ctest --output-on-failure -V %{?_smp_mflags}
-popd
+%ctest
 
 %install
 %cmake_install
+
 mkdir -m0755 -p %{buildroot}/%{_docdir}/libyang
-cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
+cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 
 %files
 %license LICENSE
+%{_libdir}/libyang.so.%{somajor}{,.*}
+%{_libdir}/libyang%{somajor}/
+
+%files tools
 %{_bindir}/yanglint
 %{_bindir}/yangre
-%{_datadir}/man/man1/yanglint.1.gz
-%{_datadir}/man/man1/yangre.1.gz
-%{_libdir}/libyang.so.1
-%{_libdir}/libyang.so.1.*
-%{_libdir}/libyang1
+%{_mandir}/man1/yanglint.1*
+%{_mandir}/man1/yangre.1*
 
 %files devel
+%dir %{_includedir}/libyang/
+%{_includedir}/libyang/*.h
 %{_libdir}/libyang.so
 %{_libdir}/pkgconfig/libyang.pc
-%{_includedir}/libyang/*.h
-%dir %{_includedir}/libyang/
 
 %files devel-doc
-%{_docdir}/libyang
+%{_docdir}/libyang/
 
-%files -n libyang-cpp
-%{_libdir}/libyang-cpp.so.1
-%{_libdir}/libyang-cpp.so.1.*
+%files cpp
+%{_libdir}/libyang-cpp.so.%{somajor}{,.*}
 
-%files -n libyang-cpp-devel
-%{_libdir}/libyang-cpp.so
-%{_includedir}/libyang/*.hpp
-%{_libdir}/pkgconfig/libyang-cpp.pc
+%files cpp-devel
 %dir %{_includedir}/libyang/
+%{_includedir}/libyang/*.hpp
+%{_libdir}/libyang-cpp.so
+%{_libdir}/pkgconfig/libyang-cpp.pc
 
 %files -n python3-libyang
 %{python3_sitearch}/yang.py
@@ -138,6 +151,11 @@ cp -r doc/html %{buildroot}/%{_docdir}/libyang/html
 %{python3_sitearch}/__pycache__/yang*
 
 %changelog
+* Sat Jul 10 2021 Neal Gompa <ngompa@datto.com> - 1.0.225-3
+- Clean up the spec file for legibility and modern spec standards
+- Split out tools into their own subpackage
+- Remove archfulness from the build path to fix documentation build
+
 * Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 1.0.225-2
 - Rebuilt for Python 3.10
 
