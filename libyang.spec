@@ -99,7 +99,6 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %files devel-doc
 %{_docdir}/libyang/
 
-<<<<<<< HEAD
 %files cpp
 %{_libdir}/libyang-cpp.so.%{somajor}{,.*}
 
