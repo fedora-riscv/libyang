@@ -29,6 +29,9 @@ BuildRequires:  bison
 BuildRequires:  graphviz
 BuildRequires:  make
 
+Conflicts:      %{name} < 1.0.225-3
+Obsoletes:      libyang2
+
 %package devel
 Summary:    Development files for libyang
 Requires:   %{name}%{?_isa} = %{version}-%{release}
@@ -38,20 +41,24 @@ Requires:   pcre2-devel
 Summary:    Documentation of libyang API
 Requires:   %{name}%{?_isa} = %{version}-%{release}
 
+%package tools
+Summary:        YANG validator tools
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+# This was not properly split out before
+Conflicts:      %{name} < 1.0.225-3 
+
 %description devel
 Headers of libyang library.
 
 %description devel-doc
 Documentation of libyang API.
 
-%description cpp
-Bindings of libyang library to C++ language.
+%description tools
+YANG validator tools.
 
-%description cpp-devel
-Headers of bindings to c++ language.
-
-%description -n python3-libyang
-Bindings of libyang library to python language.
+%description
+Libyang is YANG data modeling language parser and toolkit
+written (and providing API) in C.
 
 %prep
 %autosetup -p1
@@ -80,38 +87,22 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 
 %files
 %license LICENSE
-%{_libdir}/libyang.so.%{somajor}{,.*}
-%{_libdir}/libyang%{somajor}/
+%{_libdir}/libyang.so.2
+%{_libdir}/libyang.so.2.*
 
 %files tools
 %{_bindir}/yanglint
 %{_bindir}/yangre
 %{_datadir}/man/man1/yanglint.1.gz
-%{_libdir}/libyang.so.2
-%{_libdir}/libyang.so.2.*
 
 %files devel
-%dir %{_includedir}/libyang/
-%{_includedir}/libyang/*.h
 %{_libdir}/libyang.so
 %{_libdir}/pkgconfig/libyang.pc
+%{_includedir}/libyang/*.h
+%dir %{_includedir}/libyang/
 
 %files devel-doc
-%{_docdir}/libyang/
-
-%files cpp
-%{_libdir}/libyang-cpp.so.%{somajor}{,.*}
-
-%files cpp-devel
-%dir %{_includedir}/libyang/
-%{_includedir}/libyang/*.hpp
-%{_libdir}/libyang-cpp.so
-%{_libdir}/pkgconfig/libyang-cpp.pc
-
-%files -n python3-libyang
-%{python3_sitearch}/yang.py
-%{python3_sitearch}/_yang.so
-%{python3_sitearch}/__pycache__/yang*
+%{_docdir}/libyang
 
 %changelog
 * Fri Aug 06 2021 Tomas Korbar <tkorbar@redhat.com> - 2.0.7-1
