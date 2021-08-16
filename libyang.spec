@@ -16,18 +16,11 @@ License: BSD
 
 BuildRequires:  cmake
 BuildRequires:  doxygen
-BuildRequires:  pcre2-devel
 BuildRequires:  gcc
-BuildRequires:  gcc-c++
-BuildRequires:  graphviz
-BuildRequires:  libcmocka-devel
+BuildRequires:  cmake(cmocka) >= 1.0.0
 BuildRequires:  make
-BuildRequires:  pcre-devel
-BuildRequires:  python3-devel
-BuildRequires:  flex
-BuildRequires:  bison
-BuildRequires:  graphviz
-BuildRequires:  make
+BuildRequires:  pkgconfig(libpcre2-8) >= 10.21
+BuildRequires:  valgrind
 
 Conflicts:      %{name} < 1.0.225-3
 Obsoletes:      libyang2
