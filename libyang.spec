@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 2.0.112
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -63,12 +63,29 @@ written (and providing API) in C.
    -DENABLE_LYD_PRIV=ON \
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
 %cmake_build
-pushd redhat-linux-build
+
+%if %fedora == 34
+    %ifarch %{arm}
+        pushd armv7hl-redhat-linux-gnueabi
+    %else
+        pushd %{_host}
+    %endif
+%else
+    pushd redhat-linux-build
+%endif
 make doc
 popd
 
 %check
-pushd redhat-linux-build
+%if %fedora == 34
+    %ifarch %{arm}
+        pushd armv7hl-redhat-linux-gnueabi
+    %else
+        pushd %{_host}
+    %endif
+%else
+    pushd redhat-linux-build
+%endif
 ctest --output-on-failure -V %{?_smp_mflags}
 popd
 
@@ -99,6 +116,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Wed Jan 19 2022 Tomas Korbar <tkorbar@redhat.com> - 2.0.112-2
+- Fix building of libyang 2 on fedora 34
+
 * Tue Nov 30 2021 Tomas Korbar <tkorbar@redhat.com> - 2.0.112-1
 - Rebase to version 2.0.112
 - Resolves: rhbz#2022586
