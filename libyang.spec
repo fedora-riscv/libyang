@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 2.0.112
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -116,6 +116,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.112-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
 * Wed Jan 19 2022 Tomas Korbar <tkorbar@redhat.com> - 2.0.112-2
 - Fix building of libyang 2 on fedora 34
 
