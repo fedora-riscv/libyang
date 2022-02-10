@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 2.0.112
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -55,42 +55,29 @@ written (and providing API) in C.
 
 %prep
 %autosetup -p1
+mkdir redhat-linux-build
 
 %build
-%cmake \
-   -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-   -DCMAKE_BUILD_TYPE:String="Package" \
-   -DENABLE_LYD_PRIV=ON \
-   -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
-%cmake_build
-
-%if %fedora == 34
-    %ifarch %{arm}
-        pushd armv7hl-redhat-linux-gnueabi
-    %else
-        pushd %{_host}
-    %endif
-%else
-    pushd redhat-linux-build
-%endif
+pushd redhat-linux-build
+cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+    -DCMAKE_BUILD_TYPE:String="Release" \
+    -DCMAKE_C_FLAGS="${RPM_OPT_FLAGS}" \
+    -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS}" \
+    ..
+make
 make doc
 popd
 
 %check
-%if %fedora == 34
-    %ifarch %{arm}
-        pushd armv7hl-redhat-linux-gnueabi
-    %else
-        pushd %{_host}
-    %endif
-%else
-    pushd redhat-linux-build
-%endif
+pushd redhat-linux-build
 ctest --output-on-failure -V %{?_smp_mflags}
 popd
 
 %install
-%cmake_install
+pushd redhat-linux-build
+make DESTDIR=%{buildroot} install
+popd
 
 mkdir -m0755 -p %{buildroot}/%{_docdir}/libyang
 cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
@@ -116,6 +103,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Thu Feb 10 2022 Jakub Ružička <jakub.ruzicka@nic.cz> - 2.0.112-3
+- Adapt to build on EPEL 7
+
 * Wed Jan 19 2022 Tomas Korbar <tkorbar@redhat.com> - 2.0.112-2
 - Fix building of libyang 2 on fedora 34
 
