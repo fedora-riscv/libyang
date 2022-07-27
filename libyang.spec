@@ -7,8 +7,8 @@
 %endif
 
 Name: libyang
-Version: 2.0.194
-Release: 2%{?dist}
+Version: 2.0.231
+Release: 1%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -59,7 +59,7 @@ written (and providing API) in C.
 %build
 %cmake \
    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-   -DCMAKE_BUILD_TYPE:String="Package" \
+   -DCMAKE_BUILD_TYPE=RELWITHDEBINFO \
    -DENABLE_LYD_PRIV=ON \
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
 %cmake_build
@@ -99,6 +99,10 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %license LICENSE
 %{_libdir}/libyang.so.2
 %{_libdir}/libyang.so.2.*
+%{_datadir}/yang/modules/libyang/*.yang
+%dir %{_datadir}/yang/
+%dir %{_datadir}/yang/modules/
+%dir %{_datadir}/yang/modules/libyang/
 
 %files tools
 %{_bindir}/yanglint
@@ -116,6 +120,11 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Wed Jul 27 2022 Jakub Ružička <jakub.ruzicka@nic.cz> - 2.0.231-1
+- Rebase to version 2.0.231 (Resolves: rhbz#2111304)
+- Own yang modules (Resolves: rhbz#2094371)
+- Use proper CMAKE_BUILD_TYPE
+
 * Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.194-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
