@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 2.0.231
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -23,7 +23,6 @@ BuildRequires:  pkgconfig(libpcre2-8) >= 10.21
 BuildRequires:  valgrind
 
 Conflicts:      %{name} < 1.0.225-3
-Obsoletes:      libyang2
 
 %package devel
 Summary:    Development files for libyang
@@ -64,28 +63,12 @@ written (and providing API) in C.
    -DENABLE_VALGRIND_TESTS=%{run_valgrind_tests}
 %cmake_build
 
-%if %fedora == 34
-    %ifarch %{arm}
-        pushd armv7hl-redhat-linux-gnueabi
-    %else
-        pushd %{_host}
-    %endif
-%else
-    pushd redhat-linux-build
-%endif
+pushd redhat-linux-build
 make doc
 popd
 
 %check
-%if %fedora == 34
-    %ifarch %{arm}
-        pushd armv7hl-redhat-linux-gnueabi
-    %else
-        pushd %{_host}
-    %endif
-%else
-    pushd redhat-linux-build
-%endif
+pushd redhat-linux-build
 ctest --output-on-failure -V %{?_smp_mflags}
 popd
 
@@ -120,6 +103,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Mon Aug 01 2022 Tomas Korbar <tkorbar@redhat.com> - 2.0.231-2
+- Clean specfile and remove obsolete tag that is not relevant
+
 * Wed Jul 27 2022 Jakub Ružička <jakub.ruzicka@nic.cz> - 2.0.231-1
 - Rebase to version 2.0.231 (Resolves: rhbz#2111304)
 - Own yang modules (Resolves: rhbz#2094371)
