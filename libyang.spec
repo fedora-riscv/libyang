@@ -8,11 +8,14 @@
 
 Name: libyang
 Version: 2.0.164
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
 License: BSD
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=2184383
+Patch0:		libyang-CVE-2023-26916.patch
 
 BuildRequires:  cmake
 BuildRequires:  doxygen
@@ -103,6 +106,10 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Tue Apr 11 2023 Tomas Korbar <tkorbar@redhat.com> - 2.0.164-2
+- Fix CVE-2023-26916
+- Resolves: rhbz#2184383
+
 * Tue Mar 15 2022 Jakub Ružička <jakub.ruzicka@nic.cz> - 2.0.164-1
 - Rebase to version 2.0.164
 
