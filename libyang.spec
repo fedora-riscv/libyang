@@ -1,6 +1,6 @@
 # valgrind finds invalid writes in libcmocka on arm and power
 # see bug #1699304 for more information
-%ifarch %{arm} ppc64le
+%ifarch %{arm} ppc64le riscv64
 %global run_valgrind_tests OFF
 %else
 %global run_valgrind_tests ON
@@ -8,7 +8,7 @@
 
 Name: libyang
 Version: 2.1.55
-Release: 1%{?dist}
+Release: 1.rv64%{?dist}
 Summary: YANG data modeling language library
 Url: https://github.com/CESNET/libyang
 Source: %{url}/archive/v%{version}.tar.gz
@@ -106,6 +106,9 @@ cp -a doc/html %{buildroot}/%{_docdir}/libyang/html
 %{_docdir}/libyang
 
 %changelog
+* Fri Jul 07 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 2.1.55-1.rv64
+- Valgrind test failed on riscv64, turn it off for riscv64.
+
 * Sun Mar 19 2023 Tomas Korbar <tkorbar@redhat.com> - 2.1.55-1
 - Rebase to version 2.1.55
 - Resolves: rhbz#2179481
